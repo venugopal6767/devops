@@ -1,0 +1,100 @@
+How to Set Up and Implement a Reverse Proxy:
+
+Using Nginx
+-------------
+Step 1: Install Nginx
+
+#On Ubuntu/Debian:
+sudo apt update
+sudo apt install nginx
+
+#On CentOS/RHEL:
+sudo yum install epel-release
+sudo yum install nginx
+Step 2: Configure Nginx as a Reverse Proxy
+
+Edit the Nginx configuration file, typically located at /etc/nginx/nginx.conf or 
+create a new configuration file in /etc/nginx/conf.d/
+# Example configuration:
+nginx
+server {
+    listen 80;
+
+    server_name your_domain.com; #change domain name
+
+    location / {
+        proxy_pass http://backend_server_ip:backend_server_port; #add backend Ip and Port
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}
+
+#Step 3: Test and Restart Nginx
+sudo nginx -t
+sudo systemctl restart nginx
+
+
+Using Apache
+--------------
+Step 1: Install Apache
+
+#On Ubuntu/Debian:
+sudo apt update
+sudo apt install apache2
+
+#On CentOS/RHEL:
+sudo yum install httpd
+
+
+#Step 2: Enable Required Modules
+sudo a2enmod proxy
+sudo a2enmod proxy_http
+
+#Step 3: Configure Apache as a Reverse Proxy
+Edit the Apache configuration file, typically located at /etc/apache2/sites-available/000-default.conf.
+#Example configuration:
+apache
+<VirtualHost *:80>
+    ServerName your_domain.com  # add domain                
+
+    ProxyPreserveHost On
+    ProxyPass / http://backend_server_ip:backend_server_port/  # add backend ip or domain and port
+    ProxyPassReverse / http://backend_server_ip:backend_server_port/
+</VirtualHost>
+
+#Step 4: Test and Restart Apache
+sudo apachectl configtest
+sudo systemctl restart apache2
+
+
+
+
+
+Samplecode steps
+
+cd frontend
+npm install
+cd ..
+cd backend
+npm install
+
+cd ..
+sudo cp nginx/reverse-proxy.conf /etc/nginx/sites-available/
+sudo ln -s /etc/nginx/sites-available/reverse-proxy.conf /etc/nginx/sites-enabled/
+sudo nginx -t
+sudo systemctl restart nginx
+
+In the first terminal window:
+cd project-root/frontend
+npm start
+In the second terminal window:
+cd project-root/backend
+npm start
+
+
+check the output in browser
+
+
+ 
