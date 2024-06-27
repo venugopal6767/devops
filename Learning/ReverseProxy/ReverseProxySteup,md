@@ -74,6 +74,10 @@ sudo systemctl restart apache2
 
 Samplecode steps
 
+install nginx
+install npm
+
+
 cd frontend
 npm install
 cd ..
